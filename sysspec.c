@@ -774,6 +774,8 @@ exit(1);
 **    STOPWATCH ROUTINES    **
 *****************************/
 
+#define SEC_TO_NANOSEC 1000000000
+
 bool stopwatchRunning = false;
 struct timespec stopwatchTimespec;
 
@@ -817,8 +819,8 @@ if (clock_gettime(CLOCK_MONOTONIC, &currentTimeTimespec)) {
 	perror("clock_gettime");
 	exit(-1);
 }
-unsigned long long stopwatchtime = stopwatchTimespec.tv_sec * 1000000000 + stopwatchTimespec.tv_nsec;
-unsigned long long currentTime = currentTimeTimespec.tv_sec * 1000000000 + currentTimeTimespec.tv_nsec;
+unsigned long long stopwatchtime = stopwatchTimespec.tv_sec * SEC_TO_NANOSEC + stopwatchTimespec.tv_nsec;
+unsigned long long currentTime = currentTimeTimespec.tv_sec * SEC_TO_NANOSEC + currentTimeTimespec.tv_nsec;
 
 return currentTime - stopwatchtime;
 #endif
@@ -850,8 +852,8 @@ if (clock_gettime(CLOCK_MONOTONIC, &currentTimeTimespec)) {
 	perror("clock_gettime");
 	exit(-1);
 }
-unsigned long long stopwatchtime = stopwatchTimespec.tv_sec * 1000000000 + stopwatchTimespec.tv_nsec;
-unsigned long long currentTime = currentTimeTimespec.tv_sec * 1000000000 + currentTimeTimespec.tv_nsec;
+unsigned long long stopwatchtime = stopwatchTimespec.tv_sec * SEC_TO_NANOSEC + stopwatchTimespec.tv_nsec;
+unsigned long long currentTime = currentTimeTimespec.tv_sec * SEC_TO_NANOSEC + currentTimeTimespec.tv_nsec;
 
 stopwatchRunning = false;
 
@@ -878,7 +880,7 @@ return((unsigned long)(tickamount/1000000));
 
 #ifdef CLOCKWCPS
 /* Everybody else */
-return((unsigned long)(tickamount/1000000000));
+return((unsigned long)(tickamount/SEC_TO_NANOSEC));
 #endif
 
 #ifdef WIN31TIMER
@@ -907,7 +909,7 @@ return((double)tickamount/(double)1000000);
 
 #ifdef CLOCKWCPS
 /* Everybody else */
-return((double)tickamount/(double)1000000000);
+return((double)tickamount/(double)SEC_TO_NANOSEC);
 #endif
 
 #ifdef WIN31TIMER
