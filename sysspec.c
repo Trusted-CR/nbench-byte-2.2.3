@@ -774,6 +774,9 @@ exit(1);
 **    STOPWATCH ROUTINES    **
 *****************************/
 
+bool stopwatchRunning = false;
+struct timespec stopwatchTimespec;
+
 /****************************
 ** StartStopwatch
 ** Starts a software stopwatch.  Returns the first value of
@@ -797,7 +800,27 @@ return((unsigned long)1);
 _Call16(lpfn,"p",&win31tinfo);
 return((unsigned long)win31tinfo.dwmsSinceStart);
 #else
-return((unsigned long)clock());
+
+if(!stopwatchRunning) {
+	stopwatchRunning = true;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &stopwatchTimespec)) {
+		perror("clock_gettime");
+		exit(-1);
+	}
+
+	return 0;
+}
+
+struct timespec currentTimeTimespec;
+if (clock_gettime(CLOCK_MONOTONIC, &currentTimeTimespec)) {
+	perror("clock_gettime");
+	exit(-1);
+}
+unsigned long long stopwatchtime = stopwatchTimespec.tv_sec * 1000000000 + stopwatchTimespec.tv_nsec;
+unsigned long long currentTime = currentTimeTimespec.tv_sec * 1000000000 + currentTimeTimespec.tv_nsec;
+
+return currentTime - stopwatchtime;
 #endif
 #endif
 }
@@ -821,7 +844,18 @@ return((unsigned long)(MacHSTdelay+myTMTask.tmCount-MacHSTohead));
 _Call16(lpfn,"p",&win31tinfo);
 return((unsigned long)win31tinfo.dwmsSinceStart-startticks);
 #else
-return((unsigned long)clock()-startticks);
+
+struct timespec currentTimeTimespec;
+if (clock_gettime(CLOCK_MONOTONIC, &currentTimeTimespec)) {
+	perror("clock_gettime");
+	exit(-1);
+}
+unsigned long long stopwatchtime = stopwatchTimespec.tv_sec * 1000000000 + stopwatchTimespec.tv_nsec;
+unsigned long long currentTime = currentTimeTimespec.tv_sec * 1000000000 + currentTimeTimespec.tv_nsec;
+
+stopwatchRunning = false;
+
+return currentTime - stopwatchtime;
 #endif
 #endif
 }
@@ -844,7 +878,7 @@ return((unsigned long)(tickamount/1000000));
 
 #ifdef CLOCKWCPS
 /* Everybody else */
-return((unsigned long)(tickamount/CLOCKS_PER_SEC));
+return((unsigned long)(tickamount/1000000000));
 #endif
 
 #ifdef WIN31TIMER
@@ -873,7 +907,7 @@ return((double)tickamount/(double)1000000);
 
 #ifdef CLOCKWCPS
 /* Everybody else */
-return((double)tickamount/(double)CLOCKS_PER_SEC);
+return((double)tickamount/(double)1000000000);
 #endif
 
 #ifdef WIN31TIMER

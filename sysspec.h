@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "nmglobal.h"
