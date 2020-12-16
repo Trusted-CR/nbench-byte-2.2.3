@@ -19,7 +19,7 @@ default: nbench
 # You should leave -static in the CFLAGS so that your sysinfo can be
 # compiled into the executable.
 
-CC = gcc
+CC = /opt/optee-qemu/toolchains/aarch64/bin/aarch64-linux-gnu-gcc -static -Wl,-Ttext-segment,0x40050000
 
 # generic options for gcc
 CFLAGS = -s -static -Wall -O3
