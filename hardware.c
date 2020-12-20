@@ -168,6 +168,7 @@ void hardware(const int write_to_file, FILE *global_ofile) {
   char model[BUF_SIZ];
   char cache[BUF_SIZ];
   char os_command[] = "uname -s -r";
+#define NO_UNAME
 #ifdef NO_UNAME
   os[0] = '\0';
 #else
